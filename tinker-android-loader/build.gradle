@@ -1,0 +1,51 @@
+apply plugin: 'com.android.library'
+
+def group = "tinker-loader"
+def version = '1.9.14.25.1'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+
+        buildConfigField "String", "TINKER_VERSION", "\"${version}\""
+
+        manifestPlaceholders = [TINKER_VERSION: "${version}"]
+
+        consumerProguardFiles file('../consumer-proguard.txt')
+    }
+
+    lintOptions {
+        disable 'LongLogTag'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly fileTree(dir: 'stubs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+
+    annotationProcessor("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
+    implementation("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
+}
+
+task buildTinkerSdk(type: Copy, dependsOn: [build]) {
+    from("$buildDir/outputs/aar/") {
+        include "${project.getName()}-release.aar"
+    }
+
+    into(rootProject.file("buildSdk/android/"))
+    rename { String fileName ->
+        fileName.replace("release", "${version}")
+    }
+}
+
+apply from: '../NexusUpload/nexus_upload.gradle'
