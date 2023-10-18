@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 
-import com.macoli.reflect_helper.ReflectHelper;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import java.io.File;
@@ -43,13 +42,13 @@ final class NewClassLoaderInjector {
             patchedDexPaths[i] = patchedDexes.get(i).getAbsolutePath();
         }
         final ClassLoader newClassLoader = createNewClassLoader(oldClassLoader,
-              dexOptDir, useDLC, true, patchedDexPaths);
+                dexOptDir, useDLC, true, patchedDexPaths);
         doInject(app, newClassLoader);
         return newClassLoader;
     }
 
     public static ClassLoader triggerDex2Oat(Context context, File dexOptDir, boolean useDLC,
-                                      String... dexPaths) throws Throwable {
+                                             String... dexPaths) throws Throwable {
         return createNewClassLoader(context.getClassLoader(), dexOptDir, useDLC, false, dexPaths);
     }
 
@@ -108,7 +107,7 @@ final class NewClassLoaderInjector {
                 result = new DelegateLastClassLoader(combinedDexPath, combinedLibraryPath, oldClassLoader);
             } else {
                 result = new DelegateLastClassLoader(combinedDexPath, combinedLibraryPath, ClassLoader.getSystemClassLoader());
-                final Field parentField = ReflectHelper.getDeclaredField(ClassLoader.class, "parent");
+                final Field parentField = ClassLoader.class.getDeclaredField("parent");
                 parentField.setAccessible(true);
                 parentField.set(result, oldClassLoader);
             }
@@ -159,7 +158,7 @@ final class NewClassLoaderInjector {
         Class<?> currClazz = clazz;
         while (true) {
             try {
-                final Field result = ReflectHelper.getDeclaredField(currClazz, name);
+                final Field result = currClazz.getDeclaredField(name);
                 result.setAccessible(true);
                 return result;
             } catch (Throwable ignored) {

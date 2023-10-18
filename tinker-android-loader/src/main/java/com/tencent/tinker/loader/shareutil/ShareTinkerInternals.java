@@ -28,7 +28,6 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 
-import com.macoli.reflect_helper.ReflectHelper;
 import com.tencent.tinker.loader.TinkerRuntimeException;
 
 import java.io.BufferedInputStream;
@@ -88,7 +87,7 @@ public class ShareTinkerInternals {
         Class<?> arkApplicationInfo = null;
         try {
             arkApplicationInfo = ClassLoader.getSystemClassLoader()
-                .getParent().loadClass("com.huawei.ark.app.ArkApplicationInfo");
+                    .getParent().loadClass("com.huawei.ark.app.ArkApplicationInfo");
             Method isRunningInArkHot = null;
             isRunningInArkHot = arkApplicationInfo.getDeclaredMethod("isRunningInArk");
             isRunningInArkHot.setAccessible(true);
@@ -120,7 +119,7 @@ public class ShareTinkerInternals {
 
         try {
             Class<?> clazz = Class.forName("dalvik.system.VMRuntime");
-            Method currentGet = ReflectHelper.getDeclaredMethod(clazz, "getCurrentInstructionSet", null);
+            Method currentGet = clazz.getDeclaredMethod("getCurrentInstructionSet");
             currentGet.setAccessible(true);
             currentInstructionSet = (String) currentGet.invoke(null);
         } catch (Throwable ignored) {
@@ -160,9 +159,9 @@ public class ShareTinkerInternals {
     public static boolean isSystemOTA(String lastFingerPrint) {
         String currentFingerprint = Build.FINGERPRINT;
         if (lastFingerPrint == null
-            || lastFingerPrint.equals("")
-            || currentFingerprint == null
-            || currentFingerprint.equals("")) {
+                || lastFingerPrint.equals("")
+                || currentFingerprint == null
+                || currentFingerprint.equals("")) {
             ShareTinkerLog.d(TAG, "fingerprint empty:" + lastFingerPrint + ",current:" + currentFingerprint);
             return false;
         } else {
@@ -185,7 +184,7 @@ public class ShareTinkerInternals {
                 newName = "classes.dex";
             }
             return new ShareDexDiffPatchInfo(newName, rawDexInfo.path, rawDexInfo.destMd5InDvm, rawDexInfo.destMd5InArt,
-                rawDexInfo.dexDiffMd5, rawDexInfo.oldDexCrC, rawDexInfo.newOrPatchedDexCrC, rawDexInfo.dexMode);
+                    rawDexInfo.dexDiffMd5, rawDexInfo.oldDexCrC, rawDexInfo.newOrPatchedDexCrC, rawDexInfo.dexMode);
         }
 
         return null;
@@ -319,8 +318,8 @@ public class ShareTinkerInternals {
         }
         try {
             ApplicationInfo appInfo = context.getPackageManager()
-                .getApplicationInfo(context.getPackageName(),
-                    PackageManager.GET_META_DATA);
+                    .getApplicationInfo(context.getPackageName(),
+                            PackageManager.GET_META_DATA);
 
             Object object = appInfo.metaData.get(ShareConstants.TINKER_ID);
             if (object != null) {
@@ -503,7 +502,7 @@ public class ShareTinkerInternals {
             return;
         }
         List<RunningAppProcessInfo> appProcessList = am
-            .getRunningAppProcesses();
+                .getRunningAppProcesses();
 
         if (appProcessList == null) {
             return;
@@ -634,8 +633,8 @@ public class ShareTinkerInternals {
                     int major = Integer.parseInt(matcher.group(1));
                     int minor = Integer.parseInt(matcher.group(2));
                     isArt = (major > 2)
-                        || ((major == 2)
-                        && (minor >= 1));
+                            || ((major == 2)
+                            && (minor >= 1));
                 } catch (NumberFormatException e) {
                     // let isMultidexCapable be false
                 }
@@ -647,7 +646,7 @@ public class ShareTinkerInternals {
     private static boolean isVmJitInternal() {
         try {
             Class<?> clazz = Class.forName("android.os.SystemProperties");
-            Method mthGet =  ReflectHelper.getDeclaredMethod(clazz, "get", new Class[]{String.class});
+            Method mthGet = clazz.getDeclaredMethod("get", String.class);
 
             String jit = (String) mthGet.invoke(null, "dalvik.vm.usejit");
             String jitProfile = (String) mthGet.invoke(null, "dalvik.vm.usejitprofiles");
