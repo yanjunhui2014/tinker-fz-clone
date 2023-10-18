@@ -32,6 +32,7 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
 
+import com.macoli.reflect_helper.ReflectHelper;
 import com.tencent.tinker.loader.app.TinkerApplication;
 import com.tencent.tinker.loader.shareutil.ShareFileLockHelper;
 import com.tencent.tinker.loader.shareutil.SharePatchFileUtil;
@@ -105,7 +106,7 @@ public final class TinkerDexOptimizer {
         });
         for (File dexFile : sortList) {
             OptimizeWorker worker = new OptimizeWorker(context, dexFile, optimizedDir, useInterpretMode,
-                  useDLC, targetISA, cb);
+                    useDLC, targetISA, cb);
             if (!worker.run()) {
                 return false;
             }
@@ -329,7 +330,7 @@ public final class TinkerDexOptimizer {
                 "-f",
                 "--secondary-dex",
                 "-m", ShareTinkerInternals.isNewerOrEqualThanVersion(31 /* Android S */, true)
-                        ? "verify" : "speed-profile",
+                ? "verify" : "speed-profile",
                 context.getPackageName()
         };
         executePMSShellCommand(context, args);
@@ -349,13 +350,15 @@ public final class TinkerDexOptimizer {
         synchronized (sPerformDexOptSecondaryTransactionCode) {
             if (sPerformDexOptSecondaryTransactionCode[0] == -1) {
                 try {
-                    final Method getDeclaredFieldMethod = ShareReflectUtil.findMethod(
-                            Class.class, "getDeclaredField", String.class);
-                    getDeclaredFieldMethod.setAccessible(true);
-                    final Field cstField = (Field) getDeclaredFieldMethod.invoke(
-                            Class.forName("android.content.pm.IPackageManager$Stub"),
-                            "TRANSACTION_performDexOptSecondary"
-                    );
+//                    final Method getDeclaredFieldMethod = ShareReflectUtil.findMethod(
+//                            Class.class, "getDeclaredField", String.class);
+//                    getDeclaredFieldMethod.setAccessible(true);
+//                    final Field cstField = (Field) getDeclaredFieldMethod.invoke(
+//                            Class.forName("android.content.pm.IPackageManager$Stub"),
+//                            "TRANSACTION_performDexOptSecondary"
+//                    );
+                    Class<?> packageManagerClass = Class.forName("android.content.pm.IPackageManager$Stub");
+                    final Field cstField = ReflectHelper.getDeclaredField(packageManagerClass, "TRANSACTION_performDexOptSecondary");
                     cstField.setAccessible(true);
                     sPerformDexOptSecondaryTransactionCode[0] = (int) cstField.get(null);
                 } catch (Throwable thr) {
@@ -407,7 +410,7 @@ public final class TinkerDexOptimizer {
         }
     }
 
-    private static final IBinder[] sPMSBinderProxy = { null };
+    private static final IBinder[] sPMSBinderProxy = {null};
 
     private static IBinder getPMSBinderProxy(Context context) throws IllegalStateException {
         synchronized (sPMSBinderProxy) {
@@ -488,7 +491,7 @@ public final class TinkerDexOptimizer {
         }
     }
 
-    private static final PackageManager[] sSynchronizedPMCache = { null };
+    private static final PackageManager[] sSynchronizedPMCache = {null};
 
     private static final PackageManager getSynchronizedPackageManager(Context context) throws IllegalStateException {
         synchronized (sSynchronizedPMCache) {
@@ -543,7 +546,7 @@ public final class TinkerDexOptimizer {
     private static boolean waitUntilFileGeneratedOrTimeout(Context context, String filePath, Long... timeOutSeq) {
         final File file = new File(filePath);
         final Long[] delaySeq = (timeOutSeq != null && timeOutSeq.length > 0)
-                ? timeOutSeq : new Long[] {1000L, 2000L, 4000L, 8000L, 16000L, 32000L};
+                ? timeOutSeq : new Long[]{1000L, 2000L, 4000L, 8000L, 16000L, 32000L};
         int delaySeqIdx = 0;
         while (!SharePatchFileUtil.isLegalFile(file) && delaySeqIdx < delaySeq.length) {
             SystemClock.sleep(delaySeq[delaySeqIdx++]);

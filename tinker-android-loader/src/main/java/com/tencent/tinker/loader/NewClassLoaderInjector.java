@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 
+import com.macoli.reflect_helper.ReflectHelper;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import java.io.File;
@@ -107,7 +108,7 @@ final class NewClassLoaderInjector {
                 result = new DelegateLastClassLoader(combinedDexPath, combinedLibraryPath, oldClassLoader);
             } else {
                 result = new DelegateLastClassLoader(combinedDexPath, combinedLibraryPath, ClassLoader.getSystemClassLoader());
-                final Field parentField = ClassLoader.class.getDeclaredField("parent");
+                final Field parentField = ReflectHelper.getDeclaredField(ClassLoader.class, "parent");
                 parentField.setAccessible(true);
                 parentField.set(result, oldClassLoader);
             }
@@ -158,7 +159,7 @@ final class NewClassLoaderInjector {
         Class<?> currClazz = clazz;
         while (true) {
             try {
-                final Field result = currClazz.getDeclaredField(name);
+                final Field result = ReflectHelper.getDeclaredField(currClazz, name);
                 result.setAccessible(true);
                 return result;
             } catch (Throwable ignored) {

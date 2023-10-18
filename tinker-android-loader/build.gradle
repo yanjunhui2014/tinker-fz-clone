@@ -35,6 +35,7 @@ dependencies {
 
     annotationProcessor("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
     implementation("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
+    implementation "com.macoli.reflect_helper:gggl:1.0.0"
 }
 
 task buildTinkerSdk(type: Copy, dependsOn: [build]) {

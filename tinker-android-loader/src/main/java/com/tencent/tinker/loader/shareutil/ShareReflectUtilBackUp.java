@@ -24,13 +24,12 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.Ref;
 import java.util.Arrays;
 
 /**
  * Created by zhangshaowen on 16/8/22.
  */
-public class ShareReflectUtil {
+public class ShareReflectUtilBackUp {
 
     /**
      * Locates a given field anywhere in the class inheritance hierarchy.
@@ -43,14 +42,14 @@ public class ShareReflectUtil {
     public static Field findField(Object instance, String name) throws NoSuchFieldException {
         for (Class<?> clazz = instance.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Field field = ReflectHelper.getDeclaredField(clazz, name);
+                Field field = clazz.getDeclaredField(name);
 
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
 
                 return field;
-            } catch (Exception e) {
+            } catch (NoSuchFieldException e) {
                 // ignore and search next
             }
         }
@@ -61,14 +60,14 @@ public class ShareReflectUtil {
     public static Field findField(Class<?> originClazz, String name) throws NoSuchFieldException {
         for (Class<?> clazz = originClazz; clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Field field = ReflectHelper.getDeclaredField(clazz, name);
+                Field field = clazz.getDeclaredField(name);
 
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
 
                 return field;
-            } catch (Exception e) {
+            } catch (NoSuchFieldException e) {
                 // ignore and search next
             }
         }
@@ -89,14 +88,14 @@ public class ShareReflectUtil {
             throws NoSuchMethodException {
         for (Class<?> clazz = instance.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Method method = ReflectHelper.getDeclaredMethod(clazz, name, parameterTypes);
+                Method method = clazz.getDeclaredMethod(name, parameterTypes);
 
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
 
                 return method;
-            } catch (Exception e) {
+            } catch (NoSuchMethodException e) {
                 // ignore and search next
             }
         }
@@ -121,14 +120,14 @@ public class ShareReflectUtil {
             throws NoSuchMethodException {
         for (; clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Method method = ReflectHelper.getDeclaredMethod(clazz, name, parameterTypes);
+                Method method = clazz.getDeclaredMethod(name, parameterTypes);
 
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
 
                 return method;
-            } catch (Exception e) {
+            } catch (NoSuchMethodException e) {
                 // ignore and search next
             }
         }
@@ -165,14 +164,14 @@ public class ShareReflectUtil {
             throws NoSuchMethodException {
         for (Class<?> currClazz = clazz; currClazz != null; currClazz = currClazz.getSuperclass()) {
             try {
-                Constructor<?> ctor = ReflectHelper.getDeclaredConstructor(currClazz, parameterTypes);
+                Constructor<?> ctor = currClazz.getDeclaredConstructor(parameterTypes);
 
                 if (!ctor.isAccessible()) {
                     ctor.setAccessible(true);
                 }
 
                 return ctor;
-            } catch (Exception e) {
+            } catch (NoSuchMethodException e) {
                 // ignore and search next
             }
         }
@@ -210,8 +209,8 @@ public class ShareReflectUtil {
      * Replace the value of a field containing a non null array, by a new array containing the
      * elements of the original array plus the elements of extraElements.
      *
-     * @param instance  the instance whose field is to be modified.
-     * @param fieldName the field to modify.
+     * @param instance      the instance whose field is to be modified.
+     * @param fieldName     the field to modify.
      */
     public static void reduceFieldArray(Object instance, String fieldName, int reduceSize)
             throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
@@ -251,7 +250,7 @@ public class ShareReflectUtil {
                 Field mLoadedApk = context.getClass().getField("mLoadedApk");
                 mLoadedApk.setAccessible(true);
                 Object apk = mLoadedApk.get(context);
-                Field mActivityThreadField = ReflectHelper.getDeclaredField(apk.getClass(), "mActivityThread");
+                Field mActivityThreadField = apk.getClass().getDeclaredField("mActivityThread");
                 mActivityThreadField.setAccessible(true);
                 currentActivityThread = mActivityThreadField.get(apk);
             }

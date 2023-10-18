@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 
+import com.macoli.reflect_helper.ReflectHelper;
 import com.tencent.tinker.loader.TinkerRuntimeException;
 
 import java.io.BufferedInputStream;
@@ -119,7 +120,7 @@ public class ShareTinkerInternals {
 
         try {
             Class<?> clazz = Class.forName("dalvik.system.VMRuntime");
-            Method currentGet = clazz.getDeclaredMethod("getCurrentInstructionSet");
+            Method currentGet = ReflectHelper.getDeclaredMethod(clazz, "getCurrentInstructionSet", null);
             currentGet.setAccessible(true);
             currentInstructionSet = (String) currentGet.invoke(null);
         } catch (Throwable ignored) {
@@ -646,7 +647,7 @@ public class ShareTinkerInternals {
     private static boolean isVmJitInternal() {
         try {
             Class<?> clazz = Class.forName("android.os.SystemProperties");
-            Method mthGet = clazz.getDeclaredMethod("get", String.class);
+            Method mthGet =  ReflectHelper.getDeclaredMethod(clazz, "get", new Class[]{String.class});
 
             String jit = (String) mthGet.invoke(null, "dalvik.vm.usejit");
             String jitProfile = (String) mthGet.invoke(null, "dalvik.vm.usejitprofiles");

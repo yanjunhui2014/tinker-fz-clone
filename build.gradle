@@ -18,6 +18,8 @@ allprojects {
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
+        maven { url NEXUS_REPOSITORY_URL }
+        maven { url NEXUS_SNAPSHOT_REPOSITORY_URL }
     }
 }
 
