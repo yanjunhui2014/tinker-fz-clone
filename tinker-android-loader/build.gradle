@@ -35,6 +35,8 @@ dependencies {
 
     annotationProcessor("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
     implementation("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
+
+    implementation project(':reflect_helper')
 }
 
 task buildTinkerSdk(type: Copy, dependsOn: [build]) {

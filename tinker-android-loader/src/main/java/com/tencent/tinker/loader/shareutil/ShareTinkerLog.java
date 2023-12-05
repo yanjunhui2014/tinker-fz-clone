@@ -38,32 +38,32 @@ public class ShareTinkerLog {
         @Override
         public void v(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            Log.v(tag, log);
+            android.util.Log.v(tag, log);
         }
 
         @Override
         public void i(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            Log.i(tag, log);
+            android.util.Log.i(tag, log);
 
         }
 
         @Override
         public void d(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            Log.d(tag, log);
+            android.util.Log.d(tag, log);
         }
 
         @Override
         public void w(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            Log.w(tag, log);
+            android.util.Log.w(tag, log);
         }
 
         @Override
         public void e(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            Log.e(tag, log);
+            android.util.Log.e(tag, log);
         }
 
         @Override
@@ -72,8 +72,8 @@ public class ShareTinkerLog {
             if (log == null) {
                 log = "";
             }
-            log += "  " + Log.getStackTraceString(tr);
-            Log.e(tag, log);
+            log += "  " + android.util.Log.getStackTraceString(tr);
+            android.util.Log.e(tag, log);
         }
     };
 

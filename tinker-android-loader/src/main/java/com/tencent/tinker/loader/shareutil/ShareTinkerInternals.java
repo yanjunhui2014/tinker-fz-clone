@@ -72,11 +72,11 @@ public class ShareTinkerInternals {
     private static       String    currentInstructionSet = null;
 
     public static boolean isVmArt() {
-        return VM_IS_ART || VERSION.SDK_INT >= 21;
+        return VM_IS_ART || Build.VERSION.SDK_INT >= 21;
     }
 
     public static boolean isVmJit() {
-        return VM_IS_JIT && VERSION.SDK_INT < 24;
+        return VM_IS_JIT && Build.VERSION.SDK_INT < 24;
     }
 
     public static boolean isArkHotRuning() {
@@ -109,7 +109,7 @@ public class ShareTinkerInternals {
     }
 
     public static boolean isAfterAndroidO() {
-        return VERSION.SDK_INT > 25;
+        return Build.VERSION.SDK_INT > 25;
     }
 
     public static String getCurrentInstructionSet() {
@@ -501,7 +501,7 @@ public class ShareTinkerInternals {
         if (am == null) {
             return;
         }
-        List<RunningAppProcessInfo> appProcessList = am
+        List<ActivityManager.RunningAppProcessInfo> appProcessList = am
             .getRunningAppProcesses();
 
         if (appProcessList == null) {
@@ -509,7 +509,7 @@ public class ShareTinkerInternals {
         }
         // NOTE: getRunningAppProcess() ONLY GIVE YOU THE PROCESS OF YOUR OWN PACKAGE IN ANDROID M
         // BUT THAT'S ENOUGH HERE
-        for (RunningAppProcessInfo ai : appProcessList) {
+        for (ActivityManager.RunningAppProcessInfo ai : appProcessList) {
             // KILL OTHER PROCESS OF MINE
             if (ai.uid == android.os.Process.myUid() && ai.pid != android.os.Process.myPid()) {
                 android.os.Process.killProcess(ai.pid);
@@ -523,11 +523,11 @@ public class ShareTinkerInternals {
         if (am == null) {
             return;
         }
-        List<RunningAppProcessInfo> appProcessList = am.getRunningAppProcesses();
+        List<ActivityManager.RunningAppProcessInfo> appProcessList = am.getRunningAppProcesses();
         if (appProcessList != null) {
             // NOTE: getRunningAppProcess() ONLY GIVE YOU THE PROCESS OF YOUR OWN PACKAGE IN ANDROID M
             // BUT THAT'S ENOUGH HERE
-            for (RunningAppProcessInfo ai : appProcessList) {
+            for (ActivityManager.RunningAppProcessInfo ai : appProcessList) {
                 if (ai.uid != android.os.Process.myUid()) {
                     continue;
                 }
@@ -662,20 +662,20 @@ public class ShareTinkerInternals {
     }
 
     public static boolean isNewerOrEqualThanVersion(int apiLevel, boolean includePreviewVer) {
-        if (includePreviewVer && VERSION.SDK_INT >= 23) {
-            return VERSION.SDK_INT >= apiLevel
-                    || ((VERSION.SDK_INT == apiLevel - 1) && VERSION.PREVIEW_SDK_INT > 0);
+        if (includePreviewVer && Build.VERSION.SDK_INT >= 23) {
+            return Build.VERSION.SDK_INT >= apiLevel
+                    || ((Build.VERSION.SDK_INT == apiLevel - 1) && Build.VERSION.PREVIEW_SDK_INT > 0);
         } else {
-            return VERSION.SDK_INT >= apiLevel;
+            return Build.VERSION.SDK_INT >= apiLevel;
         }
     }
 
     public static boolean isOlderOrEqualThanVersion(int apiLevel, boolean includePreviewVer) {
-        if (includePreviewVer && VERSION.SDK_INT >= 23) {
-            return VERSION.SDK_INT <= apiLevel
-                    || ((VERSION.SDK_INT == apiLevel - 1) && VERSION.PREVIEW_SDK_INT > 0);
+        if (includePreviewVer && Build.VERSION.SDK_INT >= 23) {
+            return Build.VERSION.SDK_INT <= apiLevel
+                    || ((Build.VERSION.SDK_INT == apiLevel - 1) && Build.VERSION.PREVIEW_SDK_INT > 0);
         } else {
-            return VERSION.SDK_INT <= apiLevel;
+            return Build.VERSION.SDK_INT <= apiLevel;
         }
     }
 
