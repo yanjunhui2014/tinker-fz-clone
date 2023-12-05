@@ -18,6 +18,8 @@ package com.tencent.tinker.loader.shareutil;
 
 import android.content.Context;
 
+import com.macoli.reflect_helper.ReflectHelper;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -40,14 +42,14 @@ public class ShareReflectUtil {
     public static Field findField(Object instance, String name) throws NoSuchFieldException {
         for (Class<?> clazz = instance.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Field field = clazz.getDeclaredField(name);
+                Field field = ReflectHelper.getDeclaredField(clazz, name);// clazz.getDeclaredField(name);
 
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
 
                 return field;
-            } catch (NoSuchFieldException e) {
+            } catch (Exception e) {
                 // ignore and search next
             }
         }
@@ -58,14 +60,14 @@ public class ShareReflectUtil {
     public static Field findField(Class<?> originClazz, String name) throws NoSuchFieldException {
         for (Class<?> clazz = originClazz; clazz != null; clazz = clazz.getSuperclass()) {
             try {
-                Field field = clazz.getDeclaredField(name);
+                Field field = ReflectHelper.getDeclaredField(clazz, name);//clazz.getDeclaredField(name);
 
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
 
                 return field;
-            } catch (NoSuchFieldException e) {
+            } catch (Exception e) {
                 // ignore and search next
             }
         }

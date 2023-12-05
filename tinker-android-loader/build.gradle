@@ -4,12 +4,12 @@ def group = "tinker-loader"
 def version = '1.9.14.25.1'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdk 32
+//    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 32
 
         buildConfigField "String", "TINKER_VERSION", "\"${version}\""
 
@@ -28,6 +28,13 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    mavenCentral()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'stubs', include: ['*.jar'])
@@ -36,7 +43,8 @@ dependencies {
     annotationProcessor("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
     implementation("com.tencent.tinker:tinker-android-anno-support:${version}") { changing = true }
 
-    implementation project(':reflect_helper')
+    compileOnly(name: 'reflect_helper-release', ext: 'aar')
+//    implementation project(':reflect_helper')
 }
 
 task buildTinkerSdk(type: Copy, dependsOn: [build]) {
